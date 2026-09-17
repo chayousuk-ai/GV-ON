@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>GV-ON</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family: "Segoe UI", "Noto Sans KR", sans-serif;
+        background: #14151a;
+        color: #f3f1ea;
+      }
+      #bar {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        padding: 8px 10px;
+        background: #1c1e24;
+        border-bottom: 1px solid #2e3138;
+      }
+      #bar button {
+        height: 32px;
+        min-width: 36px;
+        border: 1px solid #3a3d45;
+        background: #2a2d36;
+        color: #f3f1ea;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      #url {
+        flex: 1;
+        height: 32px;
+        border: 1px solid #3a3d45;
+        background: #14151a;
+        color: #f3f1ea;
+        border-radius: 6px;
+        padding: 0 10px;
+      }
+      webview {
+        display: flex;
+        height: calc(100% - 49px);
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="bar">
+      <button id="back" type="button">←</button>
+      <button id="fwd" type="button">→</button>
+      <button id="reload" type="button">↻</button>
+      <input id="url" value="https://www.google.com/" spellcheck="false" />
+      <button id="go" type="button">이동</button>
+    </div>
+    <webview id="view" src="https://www.google.com/" allowpopups></webview>
+    <script>
+      const view = document.getElementById("view");
+      const url = document.getElementById("url");
+      const go = () => {
+        let u = url.value.trim();
+        if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+        view.src = u;
+      };
+      document.getElementById("go").onclick = go;
+      url.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") go();
+      });
+      document.getElementById("back").onclick = () => view.goBack();
+      document.getElementById("fwd").onclick = () => view.goForward();
+      document.getElementById("reload").onclick = () => view.reload();
+      view.addEventListener("did-navigate", (e) => {
+        url.value = e.url;
+      });
+      view.addEventListener("did-navigate-in-page", (e) => {
+        url.value = e.url;
+      });
+    </script>
+  </body>
+</html>
