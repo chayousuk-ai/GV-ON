@@ -20,13 +20,16 @@ async function waitUp() {
     try {
       const r = await fetch(URL);
       if (r.ok) return;
-    } catch {}
+    } catch {
+      /* not yet */
+    }
     await sleep(400);
   }
-  throw new Error("GV-ON 서버가 켜지지 않았습니다. npm install 을 확인하세요.");
+  throw new Error("GV-ON 서버가 켜지지 않았습니다. Node 22와 npm install 을 확인하세요.");
 }
 
 let child;
+
 app.whenReady().then(async () => {
   child = spawn(nodeBin(), ["scripts/with-app-env.mjs", "vite", "dev", "--host", "127.0.0.1", "--port", PORT], {
     cwd: ROOT,
@@ -45,10 +48,12 @@ app.whenReady().then(async () => {
   win.webContents.setUserAgent(CHROME_UA);
   await win.loadURL(URL);
 });
+
 app.on("window-all-closed", () => {
   child?.kill();
   app.quit();
 });
+
 app.on("before-quit", () => {
   child?.kill();
 });
